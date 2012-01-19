@@ -86,24 +86,20 @@ class XHProfRuns_Default implements iXHProfRuns {
 
   public function __construct($dir = null) {
 
-    // if user hasn't passed a directory location,
-    // we use the xhprof.output_dir ini setting
-    // if specified, else we default to the directory
-    // in which the error_log file resides.
-
-    if (empty($dir)) {
-      $dir = ini_get("xhprof.output_dir");
-      if (empty($dir)) {
-
-        // some default that at least works on unix...
-        $dir = "/tmp";
-
-        xhprof_error("Warning: Must specify directory location for XHProf runs. ".
+    // Always set the dir to the users temp directory 
+    // for security
+    $user = &$_SERVER['USER'];
+    if (preg_match("|/(${user}\.?(dev|stg|test|prod)?)/|", getcwd(), $match)) {
+      $env = &$match[1];
+      $dir = "/mnt/tmp/$env";
+    }
+    else {
+      $dir = "/dev/null";
+      xhprof_error("Warning: Must specify directory location for XHProf runs. ".
                      "Trying {$dir} as default. You can either pass the " .
                      "directory location as an argument to the constructor ".
                      "for XHProfRuns_Default() or set xhprof.output_dir ".
                      "ini param.");
-      }
     }
     $this->dir = $dir;
   }
