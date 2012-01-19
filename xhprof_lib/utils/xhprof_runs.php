@@ -91,7 +91,9 @@ class XHProfRuns_Default implements iXHProfRuns {
     $user = &$_SERVER['USER'];
     if (preg_match("|/(${user}\.?(dev|stg|test|prod)?)/|", getcwd(), $match)) {
       $env = &$match[1];
-      $dir = "/mnt/tmp/$env";
+      $dir = "/mnt/tmp/${env}/xhprof";
+      // If dir does not exist, create it
+      mkdir($dir, 0600, TRUE);
     }
     else {
       $dir = "/dev/null";
